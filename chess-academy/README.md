@@ -23,18 +23,24 @@ board all the way to advanced endgames — **50 interactive courses** and
 **216 verified puzzles** (266 steps in total) woven into a single guided
 roadmap, with its own account system and progress tracking.
 
-No internet, no install, no build step. It runs entirely in your browser from
-these files.
+No build step and no backend — it's a static site that runs entirely in the
+browser, so it can be hosted on any static host (Vercel, Netlify, GitHub Pages,
+etc.) or run locally.
 
 ---
 
 ## Quick start
 
-**Option A — run a tiny local server (recommended, so your progress is saved)**
+Just open the site in your browser — it's deployed as a static site.
 
-- **macOS:** double-click **`start-server.command`**. It launches a local
-  server and opens the site in your browser.
-- **Any system with Python:** from this folder run
+> First time? Create an account (it's stored locally in your browser), or click
+> **Continue as guest** to dive straight in.
+
+### Running locally (for development)
+
+From this folder, serve the files over HTTP so local storage works:
+
+- **Any system with Python:**
   ```bash
   python3 -m http.server 8000
   ```
@@ -43,16 +49,12 @@ these files.
   ```bash
   npx serve .
   ```
+- **macOS shortcut:** double-click **`start-server.command`** to do the above
+  and open the browser for you.
 
-**Option B — just open the file**
-
-Double-click **`index.html`**. Everything works, but note: some browsers block
-local storage on `file://` URLs, so your account/progress may not persist
-between sessions. The app detects this and warns you. Use Option A for saved
-progress.
-
-> First time? Create an account (it's stored locally in your browser), or click
-> **Continue as guest** to dive straight in.
+You can also just open **`index.html`** directly, but some browsers block local
+storage on `file://` URLs, so progress may not persist; serving over HTTP avoids
+that.
 
 ---
 
@@ -97,8 +99,11 @@ for you between your moves.
 - Per-user progress: completed courses, solved puzzles, XP, first-try rate.
 - A dashboard with your "Continue" button, and a profile page with stats and a
   progress reset.
-- A pre-built **admin** account that has everything completed — log in with
-  `admin` / `admin`.
+- A pre-built **administrator** account that has everything completed and can
+  open the Anti-Cheat Lab. It is seeded by `Auth.seedCompletedAccount(...)` in
+  `js/app.js`; set its username/password there. Note that because this is a
+  client-only app, whatever you put there ships in the downloadable JS, so it is
+  not a real secret — don't reuse a password you care about.
 
 ### Skip the basics
 Already know how the pieces move? On any Fundamentals course you'll see
@@ -196,7 +201,8 @@ chess-academy/
 
 - **Vanilla JavaScript, HTML and CSS.** No frameworks, no build, no dependencies
   to install for the app itself. (The `tools/` validators only need Node.)
-- **Offline-first.** Everything is local; nothing is sent anywhere.
+- **No backend.** All logic runs client-side; the host only serves static
+  files, and accounts/progress live in your browser's local storage.
 - **Interactive board** with **click-to-move or drag-and-drop**, legal-move
   dots, last-move and check highlights, a promotion picker, and smooth move
   animation. The board is labelled for screen readers (ARIA grid).

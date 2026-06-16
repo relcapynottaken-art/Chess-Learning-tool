@@ -360,6 +360,19 @@
       p.counters.attempts = Math.max(p.counters.attempts || 0, puzzles.length);
       this._save(username, p);
       return { created: created };
+    },
+
+    // Remove the legacy default administrator account ONLY if it is the untouched
+    // 'admin'/'admin' seed (still flagged admin and its password still hashes from
+    // 'admin'). A customized admin password means a real account -> left alone.
+    removeDefaultAdmin: function () {
+      var u = users(), rec = u['admin'];
+      if (!rec || !rec.admin || rec.pass !== hash(rec.salt + 'admin')) return false;
+      delete u['admin'];
+      saveUsers(u);
+      Store.remove(progressKey('admin'));
+      if (Store.get('session') === 'admin') { Store.remove('session'); _cache = { user: null, data: null }; }
+      return true;
     }
   };
 

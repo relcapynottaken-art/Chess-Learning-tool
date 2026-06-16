@@ -149,7 +149,7 @@
       h('button', { class: 'btn btn-primary btn-block', onclick: submit }, [mode === 'register' ? 'Create account & start' : 'Log in']),
       h('div', { class: 'auth-or' }, ['or']),
       h('button', { class: 'btn btn-ghost btn-block', onclick: function () { Auth.loginGuest(); go('#/'); } }, ['Continue as guest']),
-      Auth.isPersistent() ? null : h('p', { class: 'warn small' }, ['⚠ Your browser is blocking local storage, so progress won\'t be saved between sessions. Try running it from a local server (see the README).'])
+      Auth.isPersistent() ? null : h('p', { class: 'warn small' }, ['⚠ Your browser is blocking local storage (e.g. private-browsing mode), so progress won\'t be saved between sessions.'])
     ]);
     setView(h('div', { class: 'auth-wrap' }, [card]));
   }
@@ -835,8 +835,14 @@
   }
 
   function bootstrap() {
-    // Ensure a fully-completed "admin" account exists (log in with admin / admin).
-    try { Auth.seedCompletedAccount('admin', 'admin', 'Administrator'); } catch (e) { }
+    // Retire the legacy default 'admin'/'admin' account if it's still present and
+    // untouched, so the well-known default credentials stop working.
+    try { Auth.removeDefaultAdmin(); } catch (e) { }
+    // No administrator account is seeded in this (publicly hosted) build: any
+    // credentials hardcoded here would ship in the downloadable JS and so could
+    // not be kept secret. To use the Anti-Cheat Lab locally, seed one yourself,
+    // e.g. from the console:
+    //   Auth.seedCompletedAccount('your-admin-name', 'your-password', 'Administrator');
     // run the anti-cheat integrity check / repair for whoever is signed in
     try { if (Auth.currentUser()) Auth.verifyAndRepair(); } catch (e) { }
     router();
